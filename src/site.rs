@@ -51,6 +51,10 @@ impl Component for Model {
             return location.hash;
         };
         let (upper_word, lower_word) = parse_hash(&hash.into_string().unwrap());
+        let title = format!("Multiline Text Generator: {}, {}", upper_word, lower_word);
+        js! { @(no_return)
+            document.title = @{title};
+        }
 
         Model {
             symbols,
@@ -80,9 +84,11 @@ impl Component for Model {
 
         // write new words if both have a sufficient length
         if self.upper_word.len() > 1 && self.lower_word.len() > 1 {
-            let new_hash = format!("{}#{}", self.upper_word, self.lower_word);
+            let new_hash = format!("#{}#{}", self.upper_word, self.lower_word);
+            let new_title = format!("Multiline Text Generator: {}, {}", self.upper_word, self.lower_word);
             js! { @(no_return)
-                location.hash = @{new_hash};
+                history.pushState(null, @{new_title}, @{new_hash});
+                document.title = @{new_title};
             };
 
             true
